@@ -5,28 +5,10 @@
 
 set -e
 
-INSTALL_DIR="${HOME}/.local/bin"
+source "$(dirname "$0")/.env"
+
 SPECKIT_BASE_DIR="${HOME}/.local/share/speckit"
 SYMLINK_PATH="${INSTALL_DIR}/specify-cli"
-
-# Color output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
-
-# Helper functions
-print_success() {
-    echo -e "${GREEN}✓${NC} $1"
-}
-
-print_error() {
-    echo -e "${RED}✗${NC} $1"
-}
-
-print_info() {
-    echo -e "${YELLOW}ℹ${NC} $1"
-}
 
 # Fetch available versions from GitHub
 fetch_versions() {

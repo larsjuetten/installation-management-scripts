@@ -5,28 +5,10 @@
 
 set -e
 
-INSTALL_DIR="${HOME}/.local/bin"
+source "$(dirname "$0")/.env"
+
 KIND_BASE_DIR="${HOME}/.local/share/kind"
 SYMLINK_PATH="${INSTALL_DIR}/kind"
-
-# Color output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
-
-# Helper functions
-print_success() {
-    echo -e "${GREEN}✓${NC} $1"
-}
-
-print_error() {
-    echo -e "${RED}✗${NC} $1"
-}
-
-print_info() {
-    echo -e "${YELLOW}ℹ${NC} $1"
-}
 
 # Detect OS and architecture
 detect_platform() {

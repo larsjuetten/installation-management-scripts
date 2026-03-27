@@ -2,9 +2,10 @@
 # Neovim Installation Manager Script
 # This script downloads, installs and manages Neovim appimage versions
 
+source "$(dirname "$0")/.env"
+
 # Default configuration
 NVIM_VERSION="v0.11.4"  # Default version
-INSTALL_DIR="$HOME/.local/bin"  # Default installation location
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
@@ -27,8 +28,8 @@ while [[ $# -gt 0 ]]; do
       exit 0
       ;;
     *)
-      echo "Unknown option: $1"
-      echo "Use --help for usage information"
+      print_error "Unknown option: $1"
+      print_info "Use --help for usage information"
       exit 1
       ;;
   esac
@@ -36,8 +37,8 @@ done
 
 # Ensure the installation directory exists
 if [ ! -d "$INSTALL_DIR" ]; then
-  echo "Creating installation directory: $INSTALL_DIR"
-  mkdir -p "$INSTALL_DIR" || { echo "Failed to create directory $INSTALL_DIR"; exit 1; }
+  print_info "Creating installation directory: $INSTALL_DIR"
+  mkdir -p "$INSTALL_DIR" || { print_error "Failed to create directory $INSTALL_DIR"; exit 1; }
 fi
 
 # Construct the download URL and filename
@@ -45,25 +46,25 @@ DOWNLOAD_URL="https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}
 NVIM_FILENAME="nvim-${NVIM_VERSION}-linux-x86_64.appimage"
 NVIM_FILEPATH="$INSTALL_DIR/$NVIM_FILENAME"
 
-echo "Downloading Neovim ${NVIM_VERSION} to ${NVIM_FILEPATH}..."
+print_info "Downloading Neovim ${NVIM_VERSION} to ${NVIM_FILEPATH}..."
 
 # Download the appimage
-curl -L "$DOWNLOAD_URL" -o "$NVIM_FILEPATH" || { echo "Failed to download Neovim"; exit 1; }
+curl -L "$DOWNLOAD_URL" -o "$NVIM_FILEPATH" || { print_error "Failed to download Neovim"; exit 1; }
 
 # Make the appimage executable
-chmod +x "$NVIM_FILEPATH" || { echo "Failed to make appimage executable"; exit 1; }
+chmod +x "$NVIM_FILEPATH" || { print_error "Failed to make appimage executable"; exit 1; }
 
 # Create/update symbolic link
 SYMLINK_PATH="$INSTALL_DIR/nvim"
 if [ -L "$SYMLINK_PATH" ]; then
-  echo "Updating existing symlink to point to $NVIM_FILENAME"
+  print_info "Updating existing symlink to point to $NVIM_FILENAME"
   rm "$SYMLINK_PATH"
 elif [ -e "$SYMLINK_PATH" ]; then
-  echo "Warning: $SYMLINK_PATH exists but is not a symlink. Renaming to nvim.backup"
+  print_info "Warning: $SYMLINK_PATH exists but is not a symlink. Renaming to nvim.backup"
   mv "$SYMLINK_PATH" "$SYMLINK_PATH.backup"
 fi
 
-ln -s "$NVIM_FILEPATH" "$SYMLINK_PATH" || { echo "Failed to create symlink"; exit 1; }
+ln -s "$NVIM_FILEPATH" "$SYMLINK_PATH" || { print_error "Failed to create symlink"; exit 1; }
 
 echo "Neovim $NVIM_VERSION installed successfully!"
 echo "You can run it using: $SYMLINK_PATH"
